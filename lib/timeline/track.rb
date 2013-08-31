@@ -52,7 +52,7 @@ module Timeline::Track
 
     def add_activity(activity_item)
       # redis_add "global:activity", activity_item
-      add_activity_to_user(activity_item[:actor][:id], activity_item)
+      # add_activity_to_user(activity_item[:actor][:id], activity_item)
       # add_activity_by_user(activity_item[:actor][:id], activity_item)
       add_mentions(activity_item)
       add_activity_to_followers(activity_item) if @followers.any?
