@@ -29,7 +29,7 @@ module Timeline::Track
           @target = !options[:target].nil? ? send(options[:target].to_sym) : nil
           @extra_fields ||= nil
           @followers = if options[:followers]
-            send(:followers)
+            send(options[:followers])
           else
             @actor.send(options[:followers].to_sym)
           end
