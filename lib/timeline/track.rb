@@ -13,7 +13,7 @@ module Timeline::Track
       @followers = options.delete :followers
       @followers ||= :followers
       @mentionable = options.delete :mentionable
-
+      
       method_name = "track_#{@name}_after_#{@callback}".to_sym
       define_activity_method method_name, actor: @actor, object: @object, target: @target, followers: @followers, verb: name, mentionable: @mentionable
 
@@ -28,7 +28,11 @@ module Timeline::Track
           @object = set_object(options[:object])
           @target = !options[:target].nil? ? send(options[:target].to_sym) : nil
           @extra_fields ||= nil
-          @followers = @actor.send(options[:followers].to_sym)
+          @followers = if options[:followers]
+            send(:followers)
+          else
+            @actor.send(options[:followers].to_sym)
+          end
           @mentionable = options[:mentionable]
           add_activity activity(verb: options[:verb])
         end
@@ -47,9 +51,9 @@ module Timeline::Track
     end
 
     def add_activity(activity_item)
-      redis_add "global:activity", activity_item
+      # redis_add "global:activity", activity_item
       add_activity_to_user(activity_item[:actor][:id], activity_item)
-      add_activity_by_user(activity_item[:actor][:id], activity_item)
+      # add_activity_by_user(activity_item[:actor][:id], activity_item)
       add_mentions(activity_item)
       add_activity_to_followers(activity_item) if @followers.any?
     end
